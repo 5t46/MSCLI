@@ -122,11 +122,17 @@ if not exist "config.json" (
 )
 
 echo.
-echo.
 echo =================================================================
 echo [SUCCESS] Setup complete! 
-echo.
-echo To start the app, double-click the "run_app.bat" file!
 echo =================================================================
 echo.
-pause
+
+choice /C YN /M "Would you like to start the app now? "
+if !errorlevel! equ 1 (
+    echo [INFO] Launching MSCLI...
+    start run_app.bat
+) else (
+    echo [INFO] You can safely close or delete this installer file.
+    echo To start the app later, double-click the "run_app.bat" file.
+    pause
+)
