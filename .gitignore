@@ -1,0 +1,25 @@
+# 🛡️ GitHub Protection (.gitignore)
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Sensitive Configuration (PRIVATE KEYS)
+config.json
+config_backup.json
+
+# Personal Data & History
+download_history.json
+history_backup.json
+downloads/
+
+# Logs & Temporary Files
+logs/
+*.log
+__pycache__/
+*.pyc
+
+# IDE Settings
+.vscode/
+.idea/
