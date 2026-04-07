@@ -2,7 +2,7 @@
 
 A terminal-based assistant for discovering movies, fetching subtitles, and organizing your local library. Built for speed, automation, and Plex/Kodi compatibility.
 
-![App Screenshot](assets/Main.png)
+![App Screenshot](assets/SLogo.jpeg)
 
 
 ![Version](https://img.shields.io/badge/version-1.1-blue) ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey) ![License](https://img.shields.io/badge/license-MIT-green)
