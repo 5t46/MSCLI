@@ -31,10 +31,10 @@ if %errorlevel% neq 0 (
     echo [INFO] Git is not installed. Installing Git automatically...
     echo.
 
-    :: Download Git installer using PowerShell
+    rem Download Git installer using PowerShell
     set "GIT_INSTALLER=%TEMP%\Git-Installer.exe"
     powershell -Command "Write-Host '[INFO] Downloading Git for Windows...' ; try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://github.com/git-for-windows/git/releases/download/v2.47.1.windows.2/Git-2.47.1.2-64-bit.exe' -OutFile '%GIT_INSTALLER%' -UseBasicParsing } catch { Write-Host '[ERROR] Download failed'; exit 1 }"
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo [ERROR] Failed to download Git installer.
         echo Please install Git manually from https://git-scm.com/
         pause
@@ -43,20 +43,20 @@ if %errorlevel% neq 0 (
 
     echo [INFO] Running Git installer (this may take a minute)...
     start /wait "" "%GIT_INSTALLER%" /VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo [ERROR] Git installation failed.
         pause
         exit /b 1
     )
 
-    :: Clean up installer
+    rem Clean up installer
     del /f /q "%GIT_INSTALLER%" 2>nul
 
-    :: Refresh PATH so git is available in this session
+    rem Refresh PATH so git is available in this session
     set "PATH=%PATH%;C:\Program Files\Git\cmd"
 
     git --version >nul 2>&1
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo [ERROR] Git was installed but is not accessible. Please restart and try again.
         pause
         exit /b 1
@@ -136,5 +136,3 @@ echo [INFO] Cleaning up installer...
 
 :: Self-delete this batch file
 (goto) 2>nul & del /f /q "%~f0"
-
-
