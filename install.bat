@@ -8,26 +8,26 @@ echo.
 
 @set "MSCLI_DIR=%USERPROFILE%\Downloads\MSCLI"
 
-:: If requirements.txt exists in the current directory, we're already inside the repo
+rem If requirements.txt exists in the current directory, we're already inside the repo
 if exist "%~dp0requirements.txt" (
     echo [OK] MSCLI project detected in current directory.
     set "MSCLI_DIR=%~dp0"
     goto :SKIP_CLONE
 )
 
-:: Check if MSCLI exists in the Downloads folder
+rem Check if MSCLI exists in the Downloads folder
 if exist "%MSCLI_DIR%\requirements.txt" (
-    echo [OK] MSCLI already downloaded at %MSCLI_DIR%.
+    echo [OK] MSCLI already downloaded at "%MSCLI_DIR%".
     goto :SKIP_CLONE
 )
 
-:: MSCLI not found — clone it
-echo [INFO] MSCLI not found. Downloading to %MSCLI_DIR% ...
+rem MSCLI not found — clone it
+echo [INFO] MSCLI not found. Downloading to "%MSCLI_DIR%" ...
 echo.
 
-:: Check for Git
+rem Check for Git
 git --version >nul 2>&1
-if %errorlevel% neq 0 (
+if !errorlevel! neq 0 (
     echo [INFO] Git is not installed. Installing Git automatically...
     echo.
 
@@ -67,7 +67,7 @@ if %errorlevel% neq 0 (
 )
 
 git clone https://github.com/5t46/MSCLI.git "%MSCLI_DIR%"
-if %errorlevel% neq 0 (
+if !errorlevel! neq 0 (
     echo [ERROR] Failed to clone MSCLI repository.
     pause
     exit /b 1
@@ -76,12 +76,12 @@ if %errorlevel% neq 0 (
 echo [OK] MSCLI downloaded successfully.
 
 :SKIP_CLONE
-:: Move into the MSCLI project directory
+rem Move into the MSCLI project directory
 pushd "%MSCLI_DIR%"
 
-:: Check for Python
+rem Check for Python
 python --version >nul 2>&1
-if %errorlevel% neq 0 (
+if !errorlevel! neq 0 (
     echo [ERROR] Python is not installed or not in your PATH. 
     echo Please install Python from https://www.python.org/
     pause
@@ -90,7 +90,7 @@ if %errorlevel% neq 0 (
 
 echo [1/4] Creating virtual environment...
 python -m venv venv
-if %errorlevel% neq 0 (
+if !errorlevel! neq 0 (
     echo [ERROR] Failed to create virtual environment.
     pause
     exit /b 1
@@ -98,7 +98,7 @@ if %errorlevel% neq 0 (
 
 echo [2/4] Activating virtual environment...
 call venv\Scripts\activate
-if %errorlevel% neq 0 (
+if !errorlevel! neq 0 (
     echo [ERROR] Failed to activate virtual environment.
     pause
     exit /b 1
@@ -107,7 +107,7 @@ if %errorlevel% neq 0 (
 echo [3/4] Installing dependencies...
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-if %errorlevel% neq 0 (
+if !errorlevel! neq 0 (
     echo [ERROR] Failed to install requirements.
     pause
     exit /b 1
@@ -128,11 +128,3 @@ echo To start the app, double-click the "run_app.bat" file!
 echo =================================================================
 echo.
 pause
-
-:: -------------------------------------------------------------------
-:: Cleanup: Self-delete this installer
-:: -------------------------------------------------------------------
-echo [INFO] Cleaning up installer...
-
-:: Self-delete this batch file
-(goto) 2>nul & del /f /q "%~f0"
