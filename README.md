@@ -5,12 +5,13 @@ A terminal-based assistant for discovering movies, fetching subtitles, and organ
 ![App Screenshot](assets/SLogo.jpeg)
 
 
-![Version](https://img.shields.io/badge/version-1.1-blue) ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey) ![License](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-1.2-blue) ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey) ![License](https://img.shields.io/badge/license-MIT-green)
 
 ---
 
 ## Features
 
+- **Rich Modern UI** — Refined terminal aesthetics with **Rich** tables, panels, and live progress bars for a premium look.
 - **Cross-Tracker Search** — Find content across **YTS and EZTV** for maximum availability.
 - **Advanced Search** — Find content by title, genre, actor, or director via TMDb integration.
 - **Automatic Subtitles** — Fetches and matches Arabic, English, or Russian subtitles to your exact release using the OpenSubtitles API.

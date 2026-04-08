@@ -68,7 +68,7 @@ echo.
 
 :SKIP_GIT_INSTALL
 
-git clone https://github.com/5t46/MSCLI.git "%MSCLI_DIR%"
+git clone -b Release-1.2 https://github.com/5t46/MSCLI.git "%MSCLI_DIR%"
 if !errorlevel! neq 0 (
     echo [ERROR] Failed to clone MSCLI repository.
     pause
