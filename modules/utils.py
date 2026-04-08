@@ -6,11 +6,44 @@ import logging
 import shutil
 from pathlib import Path
 from requests.exceptions import RequestException
-from InquirerPy import inquirer
+import questionary
+from rich.panel import Panel
+from rich.align import Align
+from rich.rule import Rule
+from rich.table import Table
+from rich.style import Style
+from modules.console import (
+    console, C_PRIMARY, C_SECONDARY, C_SUCCESS, C_WARNING, C_ERROR, 
+    C_TEXT_PRI, C_TEXT_SEC, C_BORDER
+)
 
 CONFIG_FILE = './config/config.json'
 
-# Setup Logging
+def show_header(subtitle="Movie Downloader  v5.19.5"):
+    """Professional MCLI Header."""
+    console.clear()
+    header_content = f"[#00D7FF bold]M C L I[/]\n[#8A8A8A]{subtitle}[/]"
+    console.print(Align.center(Panel(
+        header_content,
+        border_style="#3A3A3A",
+        padding=(0, 2),
+        width=44
+    )))
+    console.print(Rule(style="#3A3A3A"))
+
+def get_questionary_style():
+    """Custom Questionary Style."""
+    return questionary.Style([
+        ("qmark",        "fg:#AF87FF bold"),
+        ("question",     "fg:#FFFFFF bold"),
+        ("answer",       "fg:#00D7FF bold"),
+        ("pointer",      "fg:#00D7FF bold"),
+        ("highlighted",  "fg:#00D7FF bold"),
+        ("selected",     "fg:#5FD75F"),
+        ("separator",    "fg:#3A3A3A"),
+        ("instruction",  "fg:#8A8A8A"),
+    ])
+
 def setup_logging():
     log_file = Path('./logs/app.log')
     log_file.parent.mkdir(parents=True, exist_ok=True)
@@ -46,103 +79,22 @@ def sanitize_filename(filename):
 
 def get_gradient_text(text, start_rgb, end_rgb):
     """Generates an ANSI RGB gradient for the given text."""
-    if not text: return ""
-    res = ""
-    n = len(text)
-    sr, sg, sb = start_rgb
-    er, eg, eb = end_rgb
-    
-    for i, char in enumerate(text):
-        if char == " ":
-            res += " "
-            continue
-        r = int(sr + (er - sr) * i / max(1, n - 1))
-        g = int(sg + (eg - sg) * i / max(1, n - 1))
-        b = int(sb + (eb - sb) * i / max(1, n - 1))
-        res += f"\x1b[38;2;{r};{g};{b}m{char}\x1b[0m"
-    return res
+    # Deprecated in favor of Rich, but kept for logic compatibility
+    return f"[#00D7FF]{text}[/]"
 
-def draw_detail_card(title, info_dict, color_code="\x1b[38;2;0;255;255m"):
-    """Draws a premium double-line bordered card that shrinks to fit the content."""
-    terminal_width = shutil.get_terminal_size().columns
-    
-    # Pre-calculate the required inner width
-    # 1. Start with the title width
-    content_max_width = len(title) + 4
-    
-    wrapped_data = [] # Store (label, lines) for drawing later
-    
+def draw_detail_card(title, info_dict, color_code="#00D7FF"):
+    """Draws a professional Rich detail card."""
+    table = Table(show_header=False, box=None, padding=(0, 1))
     for key, value in info_dict.items():
-        if not value: continue
-        label = f" {key}: "
-        val_str = str(value)
-        
-        # We calculate wrap based on a theoretical max of 80
-        theoretical_max = min(80, terminal_width - 4)
-        max_val_width = theoretical_max - len(label) - 1
-        
-        # Word-based wrapping logic
-        words = val_str.split(' ')
-        lines = []
-        current_line = []
-        current_length = 0
-        
-        for word in words:
-            if current_length + len(word) + 1 <= max_val_width:
-                current_line.append(word)
-                current_length += len(word) + 1
-            else:
-                lines.append(' '.join(current_line))
-                current_line = [word]
-                current_length = len(word)
-        if current_line:
-            lines.append(' '.join(current_line))
-            
-        wrapped_data.append((label, lines))
-        
-        # Update content_max_width based on these lines
-        for l in lines:
-            line_width = len(label) + len(l) + 1
-            if line_width > content_max_width:
-                content_max_width = line_width
-
-    # Final inner width (dynamic)
-    inner_width = max(40, min(80, content_max_width))
-    if inner_width > terminal_width - 4:
-        inner_width = terminal_width - 4
-
-    # 1. Header line
-    header_text = f" {title} "
-    # If title is longer than inner_width, header might look weird. 
-    # But inner_width is at least len(title)+4.
-    side_line_len = (inner_width - len(header_text)) // 2
-    top_line = "═" * side_line_len + header_text + "═" * (inner_width - side_line_len - len(header_text))
-    print(f"{color_code}╔{top_line}╗\x1b[0m")
+        if value:
+            table.add_row(f"[#8A8A8A]{key}:[/]", f"[#FFFFFF]{value}[/]")
     
-    # 2. Info rows
-    for label, lines in wrapped_data:
-        for i, l in enumerate(lines):
-            # Left border and label (only on first line)
-            if i == 0:
-                prefix = f"║{color_code}{label}\x1b[0m"
-                visible_prefix_len = 1 + len(label)
-            else:
-                prefix = f"║{' ' * len(label)}"
-                visible_prefix_len = 1 + len(label)
-                
-            # Content and padding
-            visible_prefix_no_border = visible_prefix_len - 1
-            padding_len = inner_width - visible_prefix_no_border - len(l)
-            # Clip content if it somehow exceeds inner_width
-            display_str = l
-            if padding_len < 0:
-                display_str = l[:inner_width - visible_prefix_no_border]
-                padding_len = 0
-                
-            print(f"{prefix}{display_str}{' ' * padding_len}║")
-            
-    # 3. Bottom line
-    print(f"{color_code}╚{'═' * inner_width}╝\x1b[0m")
+    console.print(Panel(
+        table,
+        title=f"[#AF87FF]{title}[/]",
+        border_style="#3A3A3A",
+        expand=False
+    ))
 
 def _bdecode(data):
     """Robust minimal bencode decoder (recursive)."""
@@ -369,9 +321,12 @@ def save_movie_metadata(movie_dir, metadata):
         logging.getLogger(__name__).error(f"Error saving metadata to {meta_path}: {e}")
 
 def prompt_overwrite(filepath):
-    """Prompt the user if a file exists, return True if we should write, False if skip."""
+    """Prompt using Questionary."""
     if Path(filepath).exists():
-        return inquirer.confirm(message=f"File {Path(filepath).name} already exists. Overwrite?").execute()
+        return questionary.confirm(
+            message=f"File {Path(filepath).name} already exists. Overwrite?",
+            style=get_questionary_style()
+        ).execute()
     return True
 
 def setup_directories():
